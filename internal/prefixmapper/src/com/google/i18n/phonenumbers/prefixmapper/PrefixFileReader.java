@@ -65,11 +65,13 @@ public class PrefixFileReader {
   private PhonePrefixMap getPhonePrefixDescriptions(
       int prefixMapKey, String language, String script, String region) {
     String fileName = mappingFileProvider.getFileName(prefixMapKey, language, script, region);
-    if (fileName.length() == 0) {
-      return null;
-    }
-    if (!availablePhonePrefixMaps.containsKey(fileName)) {
-      loadPhonePrefixMapFromFile(fileName);
+    synchronized (PrefixFileReader.class) {
+      if (fileName.length() == 0) {
+        return null;
+      }
+      if (!availablePhonePrefixMaps.containsKey(fileName)) {
+        loadPhonePrefixMapFromFile(fileName);
+      }
     }
     return availablePhonePrefixMaps.get(fileName);
   }
